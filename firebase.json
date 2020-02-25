@@ -1,0 +1,19 @@
+{
+  "hosting": [
+    {
+      "target": "facil",
+      "public": "dist/facil",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "rewrites": [
+        {
+          "source": "**",
+          "destination": "/index.html"
+        }
+      ]
+    }
+  ]
+}

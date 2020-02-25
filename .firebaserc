@@ -1,0 +1,11 @@
+{
+  "targets": {
+    "facil-2020": {
+      "hosting": {
+        "facil": [
+          "facil-2020"
+        ]
+      }
+    }
+  }
+}
