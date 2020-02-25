@@ -18,8 +18,8 @@ import { tap, map } from 'rxjs/operators';
     <h2>The Queue</h2>
     <div *ngFor="let person of queueRead | async">
         <div class="person">
-            <div>{{ person.name }}</div>
-            <img [src]="person.picture" />
+            <div style="font-size:2em">{{ person.name }}</div>
+            <img [src]="person.picture" style="width:200px;"/>
         </div>
     </div>
 
