@@ -12,7 +12,12 @@ export interface Person {
     <h1>Moderate!</h1>
     <button (click)="pop()">Pop</button>
     <button (click)="empty()">Empty</button>
-        <div *ngFor="let item of queueData | async">{{item | json}}</div>
+        <div *ngFor="let person of queueData | async">
+        <div class="person">
+            <div style="font-size:2em">{{ person.value.name }}</div>
+            <img [src]="person.value.picture" style="width:200px;"/>
+        </div>
+        </div>
     `,
     styles: [],
 })
@@ -39,6 +44,8 @@ export class ModerateComponent {
         this.queue.remove();
     }
     pop() {
+      if(this.syncList?.length > 0) {
         this.db.list('queue').remove(this.syncList[0].key);
+      }
     }
 }
