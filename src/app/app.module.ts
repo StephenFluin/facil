@@ -8,9 +8,10 @@ import { AngularFireDatabaseModule } from '@angular/fire/database';
 import { AngularFireModule } from '@angular/fire';
 import { ModerateComponent } from './moderate/moderate.component';
 import { HomeComponent } from './home/home.component';
+import { TopbarComponent } from './topbar/topbar.component';
 
 @NgModule({
-    declarations: [AppComponent, ModerateComponent, HomeComponent],
+    declarations: [AppComponent, ModerateComponent, HomeComponent, TopbarComponent],
     imports: [
         BrowserModule,
         AppRoutingModule,

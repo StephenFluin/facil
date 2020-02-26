@@ -9,14 +9,19 @@ export interface Person {
 @Component({
     selector: 'app-moderate',
     template: `
-    <h1>Moderate!</h1>
-    <button (click)="pop()">Pop</button>
-    <button (click)="empty()">Empty</button>
-        <div *ngFor="let person of queueData | async">
-        <div class="person">
-            <div style="font-size:2em">{{ person.value.name }}</div>
-            <img [src]="person.value.picture" style="width:200px;"/>
-        </div>
+        <app-topbar>Facilitate!</app-topbar>
+        <div class="main">
+            <p>Control the queue</p>
+            <button (click)="pop()">Pop</button>
+            <button (click)="empty()">Empty</button>
+            <div class="queue">
+                <ng-container *ngFor="let person of queueData | async">
+                    <div class="person">
+                        <div style="font-size:2em">{{ person.value.name }}</div>
+                        <img [src]="person.value.picture" style="width:200px;" />
+                    </div>
+                </ng-container>
+            </div>
         </div>
     `,
     styles: [],
@@ -33,8 +38,8 @@ export class ModerateComponent {
             })
         ),
         tap(list => {
-          (this.syncList = list);
-          console.log(list);
+            this.syncList = list;
+            console.log(list);
         })
     );
     syncList;
@@ -44,8 +49,8 @@ export class ModerateComponent {
         this.queue.remove();
     }
     pop() {
-      if(this.syncList?.length > 0) {
-        this.db.list('queue').remove(this.syncList[0].key);
-      }
+        if (this.syncList?.length > 0) {
+            this.db.list('queue').remove(this.syncList[0].key);
+        }
     }
 }
