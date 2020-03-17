@@ -35,6 +35,7 @@ import { Person } from '../moderate/moderate.component';
                 <p>The easy facilitation tool</p>
                 <button (click)="loginTwitter()">Twitter Sign-In</button>
                 <button (click)="loginGoogle()">Google Sign-In</button>
+                <button (click)="loginFB()">Facebook Sign-In</button>
             </div>
         </ng-template>
     `,
@@ -68,10 +69,9 @@ export class HomeComponent implements OnDestroy {
                     this.queueKey = null;
                     for (const item of list) {
                         if (item.value.picture === this.syncUser.photoURL) {
-                          this.queueKey = item.key;
+                            this.queueKey = item.key;
                         }
                     }
-                    console.log(list, this.queueKey);
                 })
             );
         });
@@ -84,6 +84,9 @@ export class HomeComponent implements OnDestroy {
     }
     loginTwitter() {
         this.afAuth.auth.signInWithPopup(new auth.TwitterAuthProvider());
+    }
+    loginFB() {
+        this.afAuth.auth.signInWithPopup(new auth.FacebookAuthProvider());
     }
     logout() {
         console.log('signing out');

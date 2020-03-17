@@ -11,9 +11,10 @@ import { HomeComponent } from './home/home.component';
 import { TopbarComponent } from './topbar/topbar.component';
 import { RouterModule } from '@angular/router';
 import { UnknownComponent } from './unknown.component';
+import { PrivacyComponent } from './privacy.component';
 
 @NgModule({
-    declarations: [AppComponent, ModerateComponent, HomeComponent, TopbarComponent, UnknownComponent],
+    declarations: [AppComponent, ModerateComponent, HomeComponent, TopbarComponent, UnknownComponent, PrivacyComponent],
     imports: [
         BrowserModule,
         RouterModule.forRoot(routes),
