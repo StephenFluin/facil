@@ -94,7 +94,12 @@ export class HomeComponent implements OnDestroy {
     }
 
     add() {
-        this.queue.push({ name: this.syncUser.displayName, picture: this.syncUser.photoURL }).then(result => {
+        let photo = this.syncUser.photoURL;
+        console.log(this.syncUser.providerData[0].providerId);
+        if (this.syncUser.providerData[0].providerId === 'facebook.com') {
+            photo = photo + '?height=250';
+        }
+        this.queue.push({ name: this.syncUser.displayName, picture: photo }).then(result => {
             console.log('queued', result.key);
             this.queueKey = result.key;
         });
