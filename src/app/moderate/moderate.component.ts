@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { AngularFireDatabase } from '@angular/fire/database';
-import { tap, map } from 'rxjs/operators';
+import { AngularFireDatabase, AngularFireList } from '@angular/fire/database';
+import { tap, map, takeUntil } from 'rxjs/operators';
+import { Subject, Observable } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
 export interface Person {
     key?: string;
     name: string;
@@ -27,24 +29,34 @@ export interface Person {
     styles: [],
 })
 export class ModerateComponent {
-    queue = this.db.list<{}>('queue');
-    queueData = this.queue.snapshotChanges().pipe(
-        map(actions =>
-            actions.map(a => {
-                const data = a.payload.val() as Person;
-                const key = a.payload.key;
-                const value = { key, value: data };
-                return value;
-            })
-        ),
-        tap(list => {
-            this.syncList = list;
-            console.log(list);
-        })
-    );
+    queue: AngularFireList<any>;
+    queueData: Observable<any>;
     syncList;
 
-    constructor(private db: AngularFireDatabase) {}
+    destroy = new Subject();
+
+    constructor(private route: ActivatedRoute, private db: AngularFireDatabase) {
+        this.route.paramMap.pipe(takeUntil(this.destroy)).subscribe(params => {
+            this.queue = this.db.list<any>(`queue/${params.get('id')}`);
+            this.queueData = this.queue.snapshotChanges().pipe(
+              map(actions =>
+                  actions.map(a => {
+                      const data = a.payload.val() as Person;
+                      const key = a.payload.key;
+                      const value = { key, value: data };
+                      return value;
+                  })
+              ),
+              tap(list => {
+                  this.syncList = list;
+                  console.log(list);
+              })
+          );
+        });
+    }
+    ngOnDestroy() {
+        this.destroy.next(null);
+    }
     empty() {
         this.queue.remove();
     }

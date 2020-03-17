@@ -1,8 +1,11 @@
-import { Component, OnInit } from '@angular/core';
-import { AngularFireDatabase } from '@angular/fire/database';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { AngularFireDatabase, AngularFireList } from '@angular/fire/database';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { auth } from 'firebase/app';
-import { tap, map } from 'rxjs/operators';
+import { tap, map, takeUntil } from 'rxjs/operators';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { Router, ActivatedRoute } from '@angular/router';
+import { Person } from '../moderate/moderate.component';
 
 @Component({
     selector: 'app-home',
@@ -19,8 +22,8 @@ import { tap, map } from 'rxjs/operators';
                 <div class="queue">
                     <div *ngFor="let person of queueRead | async">
                         <div class="person">
-                            <div style="font-size:2em">{{ person.name }}</div>
-                            <img [src]="person.picture" />
+                            <div style="font-size:2em">{{ person.value.name }}</div>
+                            <img [src]="person.value.picture" />
                         </div>
                     </div>
                 </div>
@@ -36,26 +39,45 @@ import { tap, map } from 'rxjs/operators';
         </ng-template>
     `,
 })
-export class HomeComponent {
+export class HomeComponent implements OnDestroy {
     user$ = this.afAuth.authState.pipe(
         tap(state => {
             this.syncUser = state;
         })
     );
-    queue = this.db.list<any>('queue');
-    queueRead = this.queue.valueChanges().pipe(
-        tap(list => {
-            console.log('list includes', list);
-            if (list?.length <= 0) {
-                this.queueKey = null;
-            }
-        })
-    );
+    queue: AngularFireList<any>;
+    queueRead: Observable<any>;
+
     syncUser: firebase.User;
     queueKey: string;
+    destroy = new Subject();
 
-    constructor(private db: AngularFireDatabase, private afAuth: AngularFireAuth) {
-        window['empty'] = () => this.empty();
+    constructor(private route: ActivatedRoute, private db: AngularFireDatabase, private afAuth: AngularFireAuth) {
+        this.route.paramMap.pipe(takeUntil(this.destroy)).subscribe(params => {
+            this.queue = this.db.list<any>(`queue/${params.get('id')}`);
+            this.queueRead = this.queue.snapshotChanges().pipe(
+                map(actions =>
+                    actions.map(a => {
+                        const data = a.payload.val() as Person;
+                        const key = a.payload.key;
+                        const value = { key, value: data };
+                        return value;
+                    })
+                ),
+                tap(list => {
+                    this.queueKey = null;
+                    for (const item of list) {
+                        if (item.value.picture === this.syncUser.photoURL) {
+                          this.queueKey = item.key;
+                        }
+                    }
+                    console.log(list, this.queueKey);
+                })
+            );
+        });
+    }
+    ngOnDestroy() {
+        this.destroy.next(null);
     }
     loginGoogle() {
         this.afAuth.auth.signInWithPopup(new auth.GoogleAuthProvider());
