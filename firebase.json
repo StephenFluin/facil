@@ -2,7 +2,7 @@
   "hosting": [
     {
       "target": "facil",
-      "public": "dist/facil",
+      "public": "dist/",
       "ignore": [
         "firebase.json",
         "**/.*",

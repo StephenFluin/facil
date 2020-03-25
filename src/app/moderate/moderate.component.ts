@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { AngularFireDatabase, AngularFireList } from '@angular/fire/database';
 import { tap, map, takeUntil } from 'rxjs/operators';
 import { Subject, Observable } from 'rxjs';
@@ -39,19 +39,19 @@ export class ModerateComponent {
         this.route.paramMap.pipe(takeUntil(this.destroy)).subscribe(params => {
             this.queue = this.db.list<any>(`queue/${params.get('id')}`);
             this.queueData = this.queue.snapshotChanges().pipe(
-              map(actions =>
-                  actions.map(a => {
-                      const data = a.payload.val() as Person;
-                      const key = a.payload.key;
-                      const value = { key, value: data };
-                      return value;
-                  })
-              ),
-              tap(list => {
-                  this.syncList = list;
-                  console.log(list);
-              })
-          );
+                map(actions =>
+                    actions.map(a => {
+                        const data = a.payload.val() as Person;
+                        const key = a.payload.key;
+                        const value = { key, value: data };
+                        return value;
+                    })
+                ),
+                tap(list => {
+                    this.syncList = list;
+                    console.log(list);
+                })
+            );
         });
     }
     ngOnDestroy() {
@@ -62,7 +62,7 @@ export class ModerateComponent {
     }
     pop() {
         if (this.syncList?.length > 0) {
-            this.db.list('queue').remove(this.syncList[0].key);
+            this.queue.remove(this.syncList[0].key);
         }
     }
 }
