@@ -26,7 +26,7 @@
     "@angular/platform-server": "~10.0.2",
     "@angular/router": "~10.0.2",
     "@nguniversal/express-engine": "^9.0.2",
-    "express": "^4.15.2",
+    "express": "^4.17.3",
     "firebase": ">= 5.5.7 <8",
     "rxjs": "~6.5.4",
     "tslib": "^2.0.0",
